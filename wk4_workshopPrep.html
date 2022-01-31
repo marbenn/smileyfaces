@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset="utf-8">
+    <title>MATCHING GAME</title>
+    <style>
+        img {
+            position: absolute;
+        }
+        div {
+            position: absolute;
+            width: 500px;
+            height: 500px;      
+        }
+        #rightSide {
+            left: 500px;
+            border-left: 5px solid;
+        }
+        /*--BONUS--*/
+        button {
+            position: absolute;
+            top: 25px;
+            left: 850px;
+            width: 150px;
+            height: 75px;
+            border-radius: 5%;
+            background: lightgray;
+            font-size: 25px;
+        }
+        h1 {
+            text-align: center;
+            width: 1000px;
+            color: purple;
+        }
+
+        h2 {
+            text-align: center;
+            width: 1000px;
+        }
+        
+    </style>
+</head>
+<body onload="generateFaces()">
+    <h1>MATCHING GAME</h1>
+    <h2>Instruction: Click on the extra smiling face on the left</h2>
+    <!--BONUS counting the rounds-->
+    <h1 id="round" style = "background:lightblue; width:1000px"></h1>
+    <div id="leftSide" ></div>
+    <div id="rightSide"></div>
+   
+    <script>
+        //let numberOfFaces = 5;
+        //BONUS:next two lines
+        let moreFaces = prompt('Set the number of additional faces for each new level');
+        let numberOfFaces = Number(moreFaces);
+
+        //BONUES: counting the rounds. next two lines
+        let numberOfRound = 0;
+        const theRound = document.querySelector('#round');
+
+        const theLeftSide = document.querySelector('#leftSide'); 
+        const theRightSide = document.querySelector('#rightSide');
+
+        function generateFaces() {
+            
+            //BONUES: counting the rounds. next three lines
+            numberOfRound += 1;          
+            const numberOfRoundText = document.createTextNode('This is round number ' + numberOfRound);
+            theRound.appendChild(numberOfRoundText);
+
+            // for loop generating faces on the left side:
+            for (let i = 0; i < numberOfFaces; i += 1) {
+                face = document.createElement('img'); 
+                    //declare a var named face and for its value, create an "img" node using document.createElement() with the appropriate argument. At the end of this operation, the var "face" should point to a newly created "img" node that has not yet been attached to teh DOM.
+                face.src = '../images/smile.png';
+                
+                let randomTop = Math.floor(Math.random()*400)+1; 
+                let randomLeft = Math.floor(Math.random()*400)+1; 
+                face.style.top = randomTop + 'px';
+                face.style.left = randomLeft + 'px';
+                
+                theLeftSide.appendChild(face);                
+            }
+
+            //putting faces on the right side
+            const leftSideImages = theLeftSide.cloneNode(true);
+            leftSideImages.removeChild(leftSideImages.lastElementChild);
+            theRightSide.appendChild(leftSideImages);
+
+            //Task 4. Part 1: listen for click on the last child (extra face) on the left side
+            theLeftSide.lastChild.addEventListener('click', nextLevel);
+
+            // when player clicks on the wrong face on the left side
+            document.body.addEventListener('click', gameOver);
+        }
+       
+        // when player clicks on the correct, extra face, move to the next level:
+        function nextLevel() {
+            
+            event.stopPropagation();          
+            // remove the faces of the previous round.
+            while (theLeftSide.firstChild) {
+                theLeftSide.removeChild(theLeftSide.firstChild);
+            }
+            while (theRightSide.firstChild) {
+                theRightSide.removeChild(theRightSide.firstChild);
+            }        
+            //numberOfFaces +=5; 
+            //BONUS: answer from prompt for number of faces
+            numberOfFaces += Number(moreFaces); 
+
+            //BONUES: counting the rounds. preventing message to append from each round
+            theRound.removeChild(theRound.firstChild);
+            generateFaces();
+        }
+        // game over
+        function gameOver() {
+            alert("Sorry, Game Over! You played " + numberOfRound + " rounds");
+
+            //remove eventListeners
+            document.body.removeEventListener('click',gameOver);
+            theLeftSide.lastChild.removeEventListener('click', nextLevel);
+
+            //BONUS - add a node to create the Play Again event. next four lines
+            const button = document.createElement('button'); 
+            button.innerHTML = "Play Again";
+            document.body.appendChild(button);  
+            document.body.lastElementChild.addEventListener('click', refreshPage);           
+        }     
+        //BONUS - function to refresh the HTML page to play again
+        function refreshPage() {
+            location.reload();
+        }
+    </script>    
+</body>
+</html>
+    
